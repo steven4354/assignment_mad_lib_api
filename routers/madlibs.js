@@ -20,7 +20,7 @@ router.post(
 
   async (req, res, next) => {
     try {
-      console.log(req.body)
+      console.log(req.body);
       let words = req.body.words || "";
       words = await wordpos.getPOS(words);
 
@@ -53,11 +53,10 @@ router.post(
 
       //testing
       /*
-      curl -X POST -H "Content-Type: application/json" -d '{Authorization: "Bearer 811adff41e1c1b4d887f7b9ba4f09a60", sentence: "This is {{ an_adjective }} sentence", words: [cool]}' http://127.0.0.1:3000/api/v1/madlibgenerator
-      curl -v -H "Authorization: Bearer 811adff41e1c1b4d887f7b9ba4f09a60" -H "Content-Type: application/json" -d '{sentence: "This is {{ an_adjective }} sentence", words: [cool]}' http://127.0.0.1:3000/api/v1/madlibgenerator
+      curl -H "Authorization: Bearer 811adff41e1c1b4d887f7b9ba4f09a60" -H "Content-Type: application/json" -d '{"sentence": "This is {{ an_adjective }} sentence", "words": ["cool"]}' http://127.0.0.1:3000/api/v1/madlibgenerator
       curl -H "Content-Type: application/json" -X POST -d '{"sentence": "This is a sentence"}' http://127.0.0.1:3000/api/v1/madlibgenerator
-
-//"Authorization: Bearer ffba104054be2dd3e61f1208a4a99a99"
+      curl -H "Authorization: Bearer 811adff41e1c1b4d887f7b9ba4f09a60" -H "Content-Type: application/json" -d '{"sentence": "{{ a_noun}} is {{ an_adjective }} {{ noun }} ", "words": ["cool", "nice", "awesome", "rock", "person"]}' http://127.0.0.1:3000/api/v1/madlibgenerator
+      //"Authorization: Bearer ffba104054be2dd3e61f1208a4a99a99"
       */
     } catch (e) {
       console.log(e);

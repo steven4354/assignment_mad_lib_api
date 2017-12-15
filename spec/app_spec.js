@@ -51,14 +51,22 @@ describe("App", () => {
   });
 
   // ----------------------------------------
-  // Furious Spinoffs API
+  // MadLibs
   // ----------------------------------------
-  it("returns an array with the given number of titles", done => {
-    request.get(
-      apiUrlFor("furious_spinoffs", {count: 10}),
-      (err, res, body) => {
-        let result = j(body);
-        expect(result.length).toEqual(10);
+  it("expect a sentence", done => {
+    request.post(
+      "http://localhost:8888/api/v1/madlibgenerator",
+      {
+        json: true,
+        Authorization: "Bearer 811adff41e1c1b4d887f7b9ba4f09a60",
+        body: {
+          sentence: "{{ a_noun}} is {{ an_adjective }} {{ noun }} ",
+          words: ["cool", "nice", "awesome", "rock", "person"]
+        }
+      },
+      function(error, response) {
+        console.log(response.body);
+        expect(response.statusCode).toEqual(200);
         done();
       }
     );
