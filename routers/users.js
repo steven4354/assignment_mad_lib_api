@@ -46,7 +46,7 @@ module.exports = middlewares => {
     User.create(userParams)
       .then(user => {
         req.flash("success", "User created! You may now login.");
-        res.redirect(h.loginPath());
+        res.redirect("/");
       })
       .catch(e => {
         if (e.errors) {

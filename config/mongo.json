@@ -1,10 +1,10 @@
 {
   "development": {
-    "database": "ponzie_development",
+    "database": "madlibs_development",
     "host": "localhost"
   },
   "test": {
-    "database": "ponzie_test",
+    "database": "madlibs_test",
     "host": "localhost"
   },
   "production": {

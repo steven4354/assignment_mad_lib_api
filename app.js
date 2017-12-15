@@ -181,7 +181,6 @@ const loggedOutOnly = (req, res, next) => {
 // Routes
 // ----------------------------------------
 
-
 // Show login only if logged out
 app.get("/login", loggedOutOnly, (req, res) => {
   res.render("sessions/new");
@@ -222,8 +221,8 @@ const usersRouter = require("./routers/users")({
 app.use("/", usersRouter);
 
 // Setup API router
-const furiousSpinoffsRouter = require("./routers/furious_spinoffs");
-app.use("/api/v1", furiousSpinoffsRouter);
+const madlibs = require("./routers/madlibs");
+app.use("/api/v1", madlibs);
 
 // ----------------------------------------
 // Template Engine
