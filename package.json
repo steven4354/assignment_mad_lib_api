@@ -1,13 +1,18 @@
 {
   "name": "project_ponz",
   "version": "1.0.0",
-  "description": "Building Ponz.io, with its endearingly upside-down-triangle-shaped business model.",
+  "description":
+    "Building Ponz.io, with its endearingly upside-down-triangle-shaped business model.",
   "main": "app.js",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test":
+      "npm run whichnodemon && nodemon --exec npm run jasmine || npm run jasmine",
+    "start": "npm run whichnodemon && nodemon app.js || node app.js",
+    "whichnodemon": "which nodemon > /dev/null",
+    "jasmine": "./node_modules/jasmine/bin/jasmine.js"
   },
   "repository": {
     "type": "git",
@@ -31,6 +36,7 @@
     "express-handlebars": "^3.0.0",
     "express-method-override-get-post-support": "^1.0.0",
     "faker": "^4.1.0",
+    "jasmine": "^2.8.0",
     "load-helpers": "^1.0.1",
     "lodash": "^4.17.4",
     "md5": "^2.2.1",
@@ -43,6 +49,8 @@
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
     "passport-local": "^1.0.0",
+    "qs": "^6.5.1",
+    "request": "^2.83.0",
     "sentencer": "^0.1.5",
     "uuid": "^3.1.0"
   },

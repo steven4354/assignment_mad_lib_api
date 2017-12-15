@@ -77,7 +77,7 @@ const morganToolkit = require("morgan-toolkit")(morgan);
 app.use(morganToolkit());
 
 //-----------------------------------------
-//Mongoose Settings
+// Mongoose Settings
 //-----------------------------------------
 const {User} = require("./models");
 const mongoose = require("mongoose");
@@ -97,16 +97,13 @@ app.use((req, res, next) => {
 });
 
 // ----------------------------------------
-// Local Passport
+// Passport
 // ----------------------------------------
 const passport = require("passport");
 app.use(passport.initialize());
 app.use(passport.session());
-console.log("passport stuff initialize");
-
 
 // Create local strategy
-
 
 const LocalStrategy = require("passport-local").Strategy;
 
@@ -125,62 +122,112 @@ const LocalStrategy = require("passport-local").Strategy;
 //   })
 // );
 
-  const localStrategy = new LocalStrategy(
-    {
-      usernameField: "email",
-      passwordField: "password"
-    },
-    function(email, password, done) {
-      User.findOne({email}, function(err, user) {
-        if (err) return done(err);
-        if (!user || !user.validPassword(password)) {
-          return done(null, false, {message: "Invalid email/password"});
-        }
-        return done(null, user);
-      });
-    }
-  )
-
-
-passport.serializeUser(function(user, done) {
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  User.findById(id, function(err, user) {
-    done(err, user);
-  });
-});
+const localStrategy = new LocalStrategy(
+  {
+    usernameField: "email",
+    passwordField: "password"
+  },
+  function(email, password, done) {
+    User.findOne({email}, function(err, user) {
+      if (err) return done(err);
+      if (!user || !user.validPassword(password)) {
+        return done(null, false, {message: "Invalid email/password"});
+      }
+      return done(null, user);
+    });
+  }
+);
 
 // Create the token bearer strategy
-
+const BearerStrategy = require("passport-http-bearer").Strategy;
 const bearerStrategy = new BearerStrategy((token, done) => {
-
   // Find the user by token
-  User.findOne({ token: token })
+  User.findOne({token: token})
     .then(user => {
-
       // Pass the user if found else false
       return done(null, user || false);
     })
     .catch(e => done(null, false));
 });
 
-
 // Use the strategy middlewares
 passport.use(localStrategy);
 passport.use(bearerStrategy);
 
+// Serializing user with ID
+// Serialize and deserialize the user with the user ID
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser((id, done) => {
+  // Find the user in the database
+  User.findById(id)
+    .then(user => done(null, user))
+    .catch(e => done(null, false));
+});
+
+// ----------------------------------------
+// Session Helper Middlewares
+// ----------------------------------------
+
+// Set up middleware to allow/disallow login/logout
+const loggedInOnly = (req, res, next) => {
+  return req.user ? next() : res.redirect("/login");
+};
+
+const loggedOutOnly = (req, res, next) => {
+  return !req.user ? next() : res.redirect("/");
+};
+
 // ----------------------------------------
 // Routes
 // ----------------------------------------
-const home = require("./routers/home");
-app.use("/", home);
 
-const users = require("./routers/users");
-app.use("/users", users);
+app.use("/", (req, res) => {
+  req.flash("Hi!");
+  res.render("welcome/index");
+});
 
+// Show login only if logged out
+app.get("/login", loggedOutOnly, (req, res) => {
+  res.render("sessions/new");
+});
 
+// Show login only if logged out
+app.get("/login", loggedOutOnly, (req, res) => {
+  res.render("sessions/new");
+});
+
+// Allow logout via GET and DELETE
+const onLogout = (req, res) => {
+  // Passport convenience method to logout
+  req.logout();
+
+  // Ensure always redirecting as GET
+  req.method = "GET";
+  res.redirect("/login");
+};
+app.get("/logout", loggedInOnly, onLogout);
+app.delete("/logout", loggedInOnly, onLogout);
+
+// Create session with passport
+app.post(
+  "/sessions",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: true
+  })
+);
+
+// Pass logged in/out middlewares to users router
+const usersRouter = require("./routers/users")({
+  loggedInOnly,
+  loggedOutOnly
+});
+app.use("/", usersRouter);
+
+// Setup API router
+const furiousSpinoffsRouter = require("./routers/furious_spinoffs");
+app.use("/api/v1", furiousSpinoffsRouter);
 
 // ----------------------------------------
 // Template Engine
@@ -210,6 +257,13 @@ args.push(() => {
   console.log(`Listening: http://${host}:${port}\n`);
 });
 
+// Disable logging in test mode
+if (process.env.NODE_ENV !== "test") {
+  app.use(morgan("tiny"));
+}
+
+// If we're running this file directly
+// start up the server
 if (require.main === module) {
   app.listen.apply(app, args);
 }
