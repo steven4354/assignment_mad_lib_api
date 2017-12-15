@@ -26,7 +26,7 @@ module.exports = middlewares => {
   // ----------------------------------------
 
   // Allow user registration only if logged out
-  router.get("/user/new", loggedOutOnly, (req, res) => {
+  router.get("/users/new", loggedOutOnly, (req, res) => {
     res.render("users/new");
   });
 
