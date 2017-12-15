@@ -5,6 +5,10 @@ const h = helpers.registered;
 const furiousSpinoff = require("furious_spinoff");
 const passport = require("passport");
 
+//do word
+var WordPOS = require("wordpos"),
+  wordpos = new WordPOS();
+
 // ----------------------------------------
 // Index
 // ----------------------------------------
@@ -22,22 +26,22 @@ router.get(
       const num = req.query.num || 10;
       const partofspeech = req.query.partofspeech || verb;
 
-      const words = {
-        verb: function() {
-          return wordpos.randVerb({count: num});
-        },
-        noun: function() {
-          return wordpos.randNoun({count: num});
-        },
-        adverb: function() {
-          return wordpos.randAdjective({count: num});
-        },
-        adjective: function() {
-          return wordpos.randAdverb({count: num});
-        }
-      };
+      // const words = {
+      //   verb: () => {
+      //     return wordpos.randVerb({count: num});
+      //   },
+      //   noun: () => {
+      //     return wordpos.randNoun({count: num});
+      //   },
+      //   adverb: () => {
+      //     return wordpos.randAdjective({count: num});
+      //   },
+      //   adjective: () => {
+      //     return wordpos.randAdverb({count: num});
+      //   }
+      // };
 
-      const result = await words[partofspeech];
+      let result = await wordpos.randVerb({count: num});
 
       console.log("result: " + result);
       res.status(200).json(result);
