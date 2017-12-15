@@ -1,2 +1,7 @@
-# assignment_mad_lib_api
-Serving up the madness with a Mad Lib API!
+# Ponz.io
+
+Building Ponz.io, with its endearingly upside-down-triangle-shaped business model.
+
+Jeffrey Dederick
+
+Dave Lee
