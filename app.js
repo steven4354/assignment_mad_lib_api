@@ -4,7 +4,7 @@ const app = express();
 // ----------------------------------------
 // App Variables
 // ----------------------------------------
-app.locals.appName = "Ponzi.io";
+app.locals.appName = "Madlibs";
 
 // ----------------------------------------
 // ENV
