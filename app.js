@@ -104,6 +104,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 console.log("passport stuff initialize");
 
+
+// Create local strategy
+
+
 const LocalStrategy = require("passport-local").Strategy;
 
 //see this post on why local strategy was changed
@@ -121,8 +125,7 @@ const LocalStrategy = require("passport-local").Strategy;
 //   })
 // );
 
-passport.use(
-  new LocalStrategy(
+  const localStrategy = new LocalStrategy(
     {
       usernameField: "email",
       passwordField: "password"
@@ -137,7 +140,7 @@ passport.use(
       });
     }
   )
-);
+
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
@@ -149,17 +152,35 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
+// Create the token bearer strategy
+
+const bearerStrategy = new BearerStrategy((token, done) => {
+
+  // Find the user by token
+  User.findOne({ token: token })
+    .then(user => {
+
+      // Pass the user if found else false
+      return done(null, user || false);
+    })
+    .catch(e => done(null, false));
+});
+
+
+// Use the strategy middlewares
+passport.use(localStrategy);
+passport.use(bearerStrategy);
+
 // ----------------------------------------
 // Routes
 // ----------------------------------------
 const home = require("./routers/home");
 app.use("/", home);
 
-const ponversion = require("./routers/ponversion");
-app.use("/ponvert", ponversion);
+const users = require("./routers/users");
+app.use("/users", users);
 
-const triangle = require("./routers/triangle");
-app.use("/triangle", triangle);
+
 
 // ----------------------------------------
 // Template Engine
