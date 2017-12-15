@@ -4,6 +4,7 @@ const helpers = require("./../helpers");
 const h = helpers.registered;
 const furiousSpinoff = require("furious_spinoff");
 const passport = require("passport");
+var Sentencer = require('sentencer');
 
 //do word
 var WordPOS = require("wordpos"),
@@ -12,6 +13,55 @@ var WordPOS = require("wordpos"),
 // ----------------------------------------
 // Index
 // ----------------------------------------
+router.get('/madlibgenerator', //?sentence=string&words=""
+
+passport.authenticate("bearer", {session: false}),
+  
+  async (req, res, next) => {
+
+
+
+    try { 
+      let words = req.query.words.split(",");
+      
+
+      Sentencer.configure({
+  // the list of nouns to use. Sentencer provides its own if you don't have one! 
+  nounList: [],
+ 
+  // the list of adjectives to use. Again, Sentencer comes with one! 
+  adjectiveList: [],
+  
+  //verbs
+  verbList: [],
+
+  //adverbs
+
+  adverbList: [],
+  // additional actions for the template engine to use. 
+  // you can also redefine the preset actions here if you need to. 
+  // See the "Add your own actions" section below. 
+  actions: {
+    my_action: function(){
+      return "something";
+    }
+  }
+});
+
+
+
+
+    } catch (e) {
+      console.log(e);
+    }
+  }
+);
+
+
+
+
+
+
 router.get(
   "/partsofspeech", //?partofspeech=verb&num=10
 
@@ -26,22 +76,26 @@ router.get(
       const num = req.query.num || 10;
       const partofspeech = req.query.partofspeech || verb;
 
-      // const words = {
-      //   verb: () => {
-      //     return wordpos.randVerb({count: num});
-      //   },
-      //   noun: () => {
-      //     return wordpos.randNoun({count: num});
-      //   },
-      //   adverb: () => {
-      //     return wordpos.randAdjective({count: num});
-      //   },
-      //   adjective: () => {
-      //     return wordpos.randAdverb({count: num});
-      //   }
-      // };
-
+      if (partofspeech === "verb"){
       let result = await wordpos.randVerb({count: num});
+      } else if 
+         (partofspeech === "noun") {
+      let result = await wordpos.randNoun({count: num});
+          } else if 
+          (partofspeech === "adverb"){
+              let result = await wordpos.randAdverb({count: num});
+          } else if 
+          (partofspeech === "adjective"){
+              let result = await wordpos.randAdjective({count: num});
+          }
+      }
+
+
+
+
+
+
+
 
       console.log("result: " + result);
       res.status(200).json(result);
