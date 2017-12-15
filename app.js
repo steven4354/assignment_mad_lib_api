@@ -181,10 +181,6 @@ const loggedOutOnly = (req, res, next) => {
 // Routes
 // ----------------------------------------
 
-app.use("/", (req, res) => {
-  req.flash("Hi!");
-  res.render("welcome/index");
-});
 
 // Show login only if logged out
 app.get("/login", loggedOutOnly, (req, res) => {
